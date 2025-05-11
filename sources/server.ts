@@ -23,14 +23,14 @@ let sendEmail = async () => {
     const transporter = nodemailer.createTransport({
         service: 'yahoo',
         auth: {
-            user: process.env.WHATEVER,
-            pass: process.env.WHATEVER, // NOT your Gmail password!
+            user: process.env.USER_EMAIL,
+            pass: process.env.USER_PASSWORD, // NOT your Gmail password!
         },
     });
 
     const mailOptions = {
-        from: process.env.USER,
-        to: process.env.USER,
+        from: process.env.USER_EMAIL,
+        to: process.env.USER_EMAIL,
         subject: 'check daily Euro rate',
         text: `Euro current exchange is ${currentExchange}`
     };
