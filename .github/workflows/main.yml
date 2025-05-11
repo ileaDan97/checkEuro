@@ -46,7 +46,8 @@ jobs:
           USER_EMAIL: ${{ secrets.SuperSecret }}
           USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
           super_secret: ${{ secrets.SuperSecret }}
-        run: echo "$SUPER_SECRET"
+        run: |
+          echo ab: $SUPER_SECRET 
 
       # Run chromedriver and Xvfb (virtual display for Chrome)
       - name: Start chromedriver and Xvfb
