@@ -42,7 +42,7 @@ jobs:
       # Set environment variables (USER, PASSWORD) from GitHub secrets
       - name: Set up environment variables
         env:
-          USER_EMAIL: ${{ "vasile" }}
+          USER_EMAIL: ${{ secrets.SuperSecret }}
           USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
         run: echo complete $USER_EMAIL
 
