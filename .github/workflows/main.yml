@@ -3,21 +3,21 @@
 name: CI
 
 # Controls when the workflow will run
-permissions:
-  contents: read
-  actions: read
-  secrets: read
 on:
   # Triggers the workflow on push or pull request events but only for the "main" branch
   push:
     branches: ["main"]
   pull_request:
     branches: ["main"]
-
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# Permissions needed to access contents and secrets
+permissions:
+  contents: read
+  actions: read
+  secrets: read
+
 jobs:
   # This workflow contains a single job called "build"
   build:
@@ -26,47 +26,40 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4  # You can switch to v2 if needed
 
-      # Setup chromedriver
       - name: Setup chromedriver
         uses: nanasess/setup-chromedriver@v2
         with:
-          # Optional: do not specify to match Chrome's version
           chromedriver-version: '88.0.4324.96'
-          # Optional: if your chrome binary name is different
           chromeapp: chrome
 
-      # Set environment variables (USER, PASSWORD) from GitHub secrets
       - name: Set up environment variables
         env:
           USER: ${{ secrets.USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          echo "User is: $USER"
-          echo "Password is: $PASSWORD"
+          if [ -z "$USER" ]; then echo "❌ USER is not set"; else echo "✅ USER is set"; fi
+          if [ -z "$PASSWORD" ]; then echo "❌ PASSWORD is not set"; else echo "✅ PASSWORD is set"; fi
 
-      # Run chromedriver and Xvfb (virtual display for Chrome)
       - name: Start chromedriver and Xvfb
         run: |
           export DISPLAY=:99
           chromedriver --url-base=/wd/hub &
           sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
-      # Install dependencies
       - name: Install dependencies
         run: npm install
 
-      # Install Playwright browser dependencies
       - name: Install Playwright browsers
         run: npx playwright install
 
-      # Install TypeScript and ts-node
       - name: Install TypeScript and ts-node
         run: npm install -D ts-node typescript @types/node
 
-      # Run the TypeScript file using ts-node
       - name: Run server
+        env:
+          USER: ${{ secrets.USER }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: npx ts-node sources/server.ts
