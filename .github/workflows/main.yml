@@ -24,11 +24,6 @@
       steps:
         # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
         - uses: actions/checkout@v4
-        - name: install env
-          env:
-            USER: ${{ secrets.USER }}
-            PASSWORD: ${{ secrets.PASSWORD }}
-
         - uses: nanasess/setup-chromedriver@v2
           with:
             # Optional: do not specify to match Chrome's version
@@ -42,7 +37,12 @@
         - run: npm install
         - run: npx playwright install
         - run: npm install -D ts-node typescript @types/node
+        - name: install env
+          env:
+              USER: ${{ secrets.USER }}
+              PASSWORD: ${{ secrets.PASSWORD }}
         - run: npx ts-node sources/server.ts
+
 
 
 
