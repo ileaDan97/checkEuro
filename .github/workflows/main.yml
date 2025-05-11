@@ -30,6 +30,9 @@
             chromedriver-version: '88.0.4324.96'
             # Optional: if your chrome binary name is different
             chromeapp: chrome
+        - env:
+            USER: ${{ secrets.USER }}
+            PASSWORD: ${{ secrets.PASSWORD }}
         - run: |
             export DISPLAY=:99
             chromedriver --url-base=/wd/hub &
@@ -37,10 +40,6 @@
         - run: npm install
         - run: npx playwright install
         - run: npm install -D ts-node typescript @types/node
-        - name: install env
-          env:
-              USER: ${{ secrets.USER }}
-              PASSWORD: ${{ secrets.PASSWORD }}
         - run: npx ts-node sources/server.ts
 
 
