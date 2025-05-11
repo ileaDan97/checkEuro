@@ -40,7 +40,9 @@ jobs:
         env:
           USER: ${{ secrets.USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
-        run: echo "Environment variables set"
+        run: |
+          echo "User is: $USER"
+          echo "Password is: $PASSWORD"
 
       # Run chromedriver and Xvfb (virtual display for Chrome)
       - name: Start chromedriver and Xvfb

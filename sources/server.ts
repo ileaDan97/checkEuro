@@ -23,8 +23,8 @@ let sendEmail = async () => {
     const transporter = nodemailer.createTransport({
         service: 'yahoo',
         auth: {
-            user: process.env.USER,
-            pass: process.env.PASSWORD, // NOT your Gmail password!
+            user: process.env.WHATEVER,
+            pass: process.env.WHATEVER, // NOT your Gmail password!
         },
     });
 
