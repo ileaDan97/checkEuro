@@ -1,47 +1,66 @@
 # This is a basic workflow to help you get started with Actions
 
-  name: CI
+name: CI
 
-  # Controls when the workflow will run
-  on:
-    # Triggers the workflow on push or pull request events but only for the "main" branch
-    push:
-      branches: [ "main" ]
-    pull_request:
-      branches: [ "main" ]
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
 
-    # Allows you to run this workflow manually from the Actions tab
-    workflow_dispatch:
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
-  # A workflow run is made up of one or more jobs that can run sequentially or in parallel
-  jobs:
-    # This workflow contains a single job called "build"
-    build:
-      # The type of runner that the job will run on
-      runs-on: ubuntu-latest
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
-      # Steps represent a sequence of tasks that will be executed as part of the job
-      steps:
-        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-        - uses: actions/checkout@v4
-        - uses: nanasess/setup-chromedriver@v2
-          with:
-            # Optional: do not specify to match Chrome's version
-            chromedriver-version: '88.0.4324.96'
-            # Optional: if your chrome binary name is different
-            chromeapp: chrome
-        - env:
-            USER: ${{ secrets.USER }}
-            PASSWORD: ${{ secrets.PASSWORD }}
-        - run: |
-            export DISPLAY=:99
-            chromedriver --url-base=/wd/hub &
-            sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-        - run: npm install
-        - run: npx playwright install
-        - run: npm install -D ts-node typescript @types/node
-        - run: npx ts-node sources/server.ts
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
+      # Setup chromedriver
+      - name: Setup chromedriver
+        uses: nanasess/setup-chromedriver@v2
+        with:
+          # Optional: do not specify to match Chrome's version
+          chromedriver-version: '88.0.4324.96'
+          # Optional: if your chrome binary name is different
+          chromeapp: chrome
 
+      # Set environment variables (USER, PASSWORD) from GitHub secrets
+      - name: Set up environment variables
+        env:
+          USER: ${{ secrets.USER }}
+          PASSWORD: ${{ secrets.PASSWORD }}
+        run: echo "Environment variables set"
 
+      # Run chromedriver and Xvfb (virtual display for Chrome)
+      - name: Start chromedriver and Xvfb
+        run: |
+          export DISPLAY=:99
+          chromedriver --url-base=/wd/hub &
+          sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 &
 
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Install Playwright browser dependencies
+      - name: Install Playwright browsers
+        run: npx playwright install
+
+      # Install TypeScript and ts-node
+      - name: Install TypeScript and ts-node
+        run: npm install -D ts-node typescript @types/node
+
+      # Run the TypeScript file using ts-node
+      - name: Run server
+        run: npx ts-node sources/server.ts
