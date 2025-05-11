@@ -44,7 +44,7 @@ jobs:
         env:
           USER_EMAIL: ${{ secrets.SuperSecret }}
           USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
-        run: echo complete $USER_EMAIL
+        run: echo "$USER_EMAIL"
 
       # Run chromedriver and Xvfb (virtual display for Chrome)
       - name: Start chromedriver and Xvfb
