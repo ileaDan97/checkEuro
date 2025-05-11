@@ -44,9 +44,7 @@ jobs:
         env:
           USER: ${{ secrets.USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
-        run: |
-          echo "User is: $USER"
-          echo "Password is: $PASSWORD"
+        run: echo complete
 
       # Run chromedriver and Xvfb (virtual display for Chrome)
       - name: Start chromedriver and Xvfb
@@ -58,6 +56,10 @@ jobs:
       # Install dependencies
       - name: Install dependencies
         run: npm install
+
+      - name: Start the env secrets
+        run: | 
+          echo "usr: $USER"
 
       # Install Playwright browser dependencies
       - name: Install Playwright browsers
