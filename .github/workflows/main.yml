@@ -43,9 +43,8 @@ jobs:
       - name: Set up environment variables
         shell: bash
         env:
-          USER_EMAIL: ${{ secrets.SuperSecret }}
-          USER_PASSWORD: ${{ secrets.USER_PASSWORD }}
-          super_secret: ${{ secrets.SuperSecret }}
+          SECRET_NAME: ${{ secrets.SECRET_NAME }}
+          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
         run: |
           echo ab: $SUPER_SECRET 
 

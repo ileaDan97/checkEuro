@@ -3,6 +3,7 @@ import {chromium} from 'playwright';
 import nodemailer from 'nodemailer';
 // @ts-ignore
 import dotenv from 'dotenv';
+
 dotenv.config();
 
 let checkEuroValue = async () => {
@@ -10,12 +11,31 @@ let checkEuroValue = async () => {
     const page = await browser.newPage();
 
     await page.goto("https://transilvaniaexchange.ro/")
-    const sellEuroText = await page.locator(".row-2.even .column-5").textContent()
 
-    // Clean and convert the string to a number
-    const sellEuroRaw = parseFloat(sellEuroText?.replace(",", ".") || "0")
+    const rows = await page.$$eval('#tablepress-1 tbody tr', trs => {
+        return trs.map(tr => {
+            const cells = tr.querySelectorAll('td');
+            return {
+                currency: cells[1]?.textContent?.trim(),
+                code: cells[2]?.textContent?.trim(),
+                buy: cells[3]?.textContent?.trim(),
+                sell: cells[4]?.textContent?.trim(),
+            };
+        });
+    });
 
-    return sellEuroRaw
+    console.log("┌────────────────────────────┬──────┬────────┬────────┐");
+    console.log("│ Currency                   │ Code │  Buy   │  Sell  │");
+    console.log("├────────────────────────────┼──────┼────────┼────────┤");
+
+    for (const row of rows) {
+        if (row.currency && row.code) {
+            console.log(`│ ${row.currency.padEnd(26)} │ ${row.code.padEnd(4)} │ ${row.buy?.padEnd(6)} │ ${row.sell?.padEnd(6)} │`);
+        }
+    }
+
+    console.log("└────────────────────────────┴──────┴────────┴────────┘");
+
 }
 
 let sendEmail = async () => {
@@ -43,4 +63,4 @@ let sendEmail = async () => {
     }
 }
 
-// sendEmail()
+sendEmail()
