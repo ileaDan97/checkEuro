@@ -33,6 +33,8 @@ let checkEuroValue = async () => {
         }
     }
 
+    await browser.close();
+
     return response;
 }
 
