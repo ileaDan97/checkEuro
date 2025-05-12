@@ -40,13 +40,6 @@ jobs:
           chromeapp: chrome
 
       # Set environment variables (USER, PASSWORD) from GitHub secrets
-      - name: Set up environment variables
-        shell: bash
-        env:
-          SECRET_NAME: ${{ secrets.SECRET_NAME }}
-          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
-        run: |
-          echo ab: $SUPER_SECRET 
 
       # Run chromedriver and Xvfb (virtual display for Chrome)
       - name: Start chromedriver and Xvfb
@@ -73,4 +66,7 @@ jobs:
 
       # Run the TypeScript file using ts-node
       - name: Run server
+        env:
+          SECRET_NAME: ${{ secrets.SECRET_NAME }}
+          SECRET_PASSWORD: ${{ secrets.SECRET_PASSWORD }}
         run: npx ts-node sources/server.ts

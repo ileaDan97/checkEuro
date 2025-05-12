@@ -10,7 +10,9 @@ let checkEuroValue = async () => {
     const browser = await chromium.launch({headless: true});
     const page = await browser.newPage();
 
-    await page.goto("https://transilvaniaexchange.ro/")
+    let response: string = '';
+
+    await page.goto("https://transilvaniaexchange.ro/");
 
     const rows = await page.$$eval('#tablepress-1 tbody tr', trs => {
         return trs.map(tr => {
@@ -24,35 +26,32 @@ let checkEuroValue = async () => {
         });
     });
 
-    console.log("┌────────────────────────────┬──────┬────────┬────────┐");
-    console.log("│ Currency                   │ Code │  Buy   │  Sell  │");
-    console.log("├────────────────────────────┼──────┼────────┼────────┤");
 
     for (const row of rows) {
-        if (row.currency && row.code) {
-            console.log(`│ ${row.currency.padEnd(26)} │ ${row.code.padEnd(4)} │ ${row.buy?.padEnd(6)} │ ${row.sell?.padEnd(6)} │`);
+        if (row.currency && row.code && row.buy && row.sell) {
+            response += `│ ${row.currency.padEnd(26)} │ ${row.code.padEnd(4)} │ ${row.buy.padStart(6)} │ ${row.sell.padStart(6)} │\n`;
         }
     }
 
-    console.log("└────────────────────────────┴──────┴────────┴────────┘");
-
+    return response;
 }
 
 let sendEmail = async () => {
+
     const currentExchange = await checkEuroValue()
     const transporter = nodemailer.createTransport({
         service: 'yahoo',
         auth: {
-            user: process.env.USER_EMAIL,
-            pass: process.env.USER_PASSWORD, // NOT your Gmail password!
+            user: process.env.SECRET_NAME,
+            pass: process.env.SECRET_PASSWORD, // NOT your Gmail password!
         },
     });
 
     const mailOptions = {
-        from: process.env.USER_EMAIL,
-        to: process.env.USER_EMAIL,
+        from: process.env.SECRET_NAME,
+        to: process.env.SECRET_NAME,
         subject: 'check daily Euro rate',
-        text: `Euro current exchange is ${currentExchange}`
+        text: currentExchange
     };
 
     try {
